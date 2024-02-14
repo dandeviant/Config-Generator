@@ -73,8 +73,8 @@ Examples for Bootstrap components I might wanna use.
 
         <button class="btn btn-dark shadow" id="btnSwitch">Toggle Mode</button>
 
-        <input type="text" placeholder="Bullshit">
-        <button type="button" class="btn btn-primary" onclick="copyToClipboard">Copy</button>
+        <input type="text" placeholder="Bullshit" id="copy">
+        <button type="button" class="btn btn-primary" onclick="copyToClipboard()">Copy</button>
         <script>
 
         </script>
@@ -97,6 +97,17 @@ Examples for Bootstrap components I might wanna use.
                 document.documentElement.setAttribute('data-bs-theme','dark')
             }
         })
+
+        function copyToClipboard(){
+          var copyText = document.getElementById("copy");
+          copyText.select();
+
+          navigator.clipboard.writeText(copyText.value);
+          alert("Text copied")
+        }
+        
+
+
       </script>
     </footer>
 </html>
