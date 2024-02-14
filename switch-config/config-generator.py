@@ -9,13 +9,27 @@
 #  3. Copy and paste the list into the VLAN input prompt.
 #  4. Voila 
 
-port_first = input("Port naming first number: ")
-print("Port name: GigabitEthernet%s/0/x" % (port_first))
+
+print("Port naming format (x: 1-4) (y: 1-48): ")
+print("1. GigabitEthernetx/0/y (Catalyst 9000 Series / 3650 / Newer models)")
+print("2. GigabitEthernet0/y (Catalyst 3560X / 3560G / Older models)")
+print("3. FastEthernet0/y (more ancient models) ")
+portname_format = input("Select port naming format (1 / 2 / 3) : ")
+
+if portname_format == 1:
+    portname = "GigabitEthernet" #include more for stacking options (value x)
+elif portname_format == 2:
+    portname = "GigabitEthernet0/"
+else:
+    portname = "FastEthernet0/"
 vlan_input = input("Enter VLAN list:")
 vlan_list = vlan_input.split()
 vlan_count = len(vlan_list)
-
+print("VLAN count : %s" % (str(vlan_count)))
+if vlan_count != 48:
+    print("VLANs entered is less than 48")
 for x in range(vlan_count):
-    print("interface GigabitEthernet%s/0/%s" % (port_first, x+1))
+    print("interface %s%s" % (portname, x+1))
     print(" switchport access vlan %s" % (vlan_list[x]))
     print("! ")
+
