@@ -8,6 +8,7 @@
 #  2. Enter port numbering first digit, eg. Gi2/0/1 (which is 2) or Gi3/0/1 (which is 3)
 #  3. Copy and paste the list into the VLAN input prompt.
 #  4. Voila 
+# Still figuring out what to add
 
 
 print("Port naming format (x: 1-4) (y: 1-48): ")
