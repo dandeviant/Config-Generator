@@ -1,10 +1,11 @@
-PROJECT IDEA
+# PROJECT IDEA
 
 Currently facing difficulties writing config for hundreds of 
 fuckin ports individually
 
+## Config Generator 
 
-IDEA:
+### Main Idea:
 
 Write a local web app program that generates Cisco IOS config
 based on user input

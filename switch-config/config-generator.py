@@ -32,4 +32,3 @@ for x in range(vlan_count):
     print("interface %s%s" % (portname, x+1))
     print(" switchport access vlan %s" % (vlan_list[x]))
     print("! ")
-
