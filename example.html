@@ -13,10 +13,10 @@ Examples for Bootstrap components I might wanna use.
         <link href="asset/css/bootstrap.min.css" rel="stylesheet">
     </head>
     <!-- body margining-->
-    <body style="margin-left: 10%; margin-right: 10%; margin-top: 5%;"> 
+    <body style="margin: 5%;"> 
         <h1>Hello</h1>
         <!-- Bootstrap samples for testing -->
-        <form>
+        <form style="margin-left: 10%; margin-right: 10%; margin-top: 5%;">
             <div class="row">
               <div class="col">
                 <div class="mb-3">
@@ -32,13 +32,21 @@ Examples for Bootstrap components I might wanna use.
                   <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
                 </div>
               </div>
-              <div class="row">
+              <div class="col">
                 <div class="mb-3">
-                  <label for="exampleInputPassword1" class="form-label">Password</label>
-                  <input type="password" class="form-control" id="exampleInputPassword1">
+                  <label for="exampleInputEmail1" class="form-label">Email address</label>
+                  <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                  <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
                 </div>
               </div>
             </div>
+            <div class="row">
+              <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Password</label>
+                <input type="password" class="form-control" id="exampleInputPassword1">
+              </div>
+            </div>
+            
             <div class="mb-3 form-check">
               <input type="checkbox" class="form-check-input" id="exampleCheck1">
               <label class="form-check-label" for="exampleCheck1">Check me out</label>
@@ -64,6 +72,9 @@ Examples for Bootstrap components I might wanna use.
         </div>
 
         <button class="btn btn-dark shadow" id="btnSwitch">Toggle Mode</button>
+
+        <input type="text" placeholder="Bullshit">
+        <button type="button" class="btn btn-primary" onclick="copyToClipboard">Copy</button>
         <script>
 
         </script>
