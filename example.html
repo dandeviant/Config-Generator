@@ -1,14 +1,13 @@
 <!---
-Config Generator Web (not exactly web, tho...)
-- Refer to project-idea.txt
-- All required files(scripts, css, img, etc) are in /asset
+Examples for Bootstrap components I might wanna use.
 -->
+
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Config Generator</title>
+        <title>Bootstrap 5.2.3 Example page</title>
 
         <!-- Bootstrap CSS import -->
         <link href="asset/css/bootstrap.min.css" rel="stylesheet">
@@ -18,14 +17,27 @@ Config Generator Web (not exactly web, tho...)
         <h1>Hello</h1>
         <!-- Bootstrap samples for testing -->
         <form>
-            <div class="mb-3">
-              <label for="exampleInputEmail1" class="form-label">Email address</label>
-              <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-              <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-            </div>
-            <div class="mb-3">
-              <label for="exampleInputPassword1" class="form-label">Password</label>
-              <input type="password" class="form-control" id="exampleInputPassword1">
+            <div class="row">
+              <div class="col">
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">Email address</label>
+                  <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                  <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">Email address</label>
+                  <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                  <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="exampleInputPassword1">
+                </div>
+              </div>
             </div>
             <div class="mb-3 form-check">
               <input type="checkbox" class="form-check-input" id="exampleCheck1">
@@ -51,10 +63,29 @@ Config Generator Web (not exactly web, tho...)
             </ul>
         </div>
 
+        <button class="btn btn-dark shadow" id="btnSwitch">Toggle Mode</button>
+        <script>
+
+        </script>
+
         <!-- Bootstrap JavaScript import -->
         <script src="asset/js/bootstrap.bundle.min.js"></script>
+        <script>
+
+        </script>
     </body>
     <footer>
 
+      <script>
+        // toggle dark mode
+        document.getElementById('btnSwitch').addEventListener('click',()=>{
+            if (document.documentElement.getAttribute('data-bs-theme') == 'dark') {
+                document.documentElement.setAttribute('data-bs-theme','light')
+            }
+            else {
+                document.documentElement.setAttribute('data-bs-theme','dark')
+            }
+        })
+      </script>
     </footer>
 </html>
