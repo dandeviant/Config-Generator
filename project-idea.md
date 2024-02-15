@@ -3,6 +3,16 @@
 Currently facing difficulties writing config for hundreds of 
 fuckin ports individually
 
+
+# Project Overall Objectives
+- To automate the process of writing configurations for new switches to be deploued in production level
+- Automate the configs that comply to CCC (Config Compliance Check)
+
+
+# Project Phase Objectives
+- Automate the generation of configs for ACCESS PORTS
+- To be expanded to global config
+
 ## Config Generator 
 
 ### Main Idea:
