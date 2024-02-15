@@ -20,18 +20,24 @@ Examples for Bootstrap components I might wanna use.
             <div class="row">
               <div class="col">
                 <div class="mb-3">
-                  <label for="exampleInputEmail1" class="form-label">Email address</label>
-                  <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                  <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                  <label for="exampleInputEmail1" class="form-label">First Name</label>
+                  <input type="text" class="form-control" id="firstName" aria-describedby="emailHelp">
                 </div>
               </div>
               <div class="col">
                 <div class="mb-3">
-                  <label for="exampleInputEmail1" class="form-label">Email address</label>
-                  <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                  <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                  <label for="exampleInputEmail1" class="form-label">Middle Name (optional)</label>
+                  <input type="text" class="form-control" id="middleName" aria-describedby="emailHelp">
                 </div>
               </div>
+              <div class="col">
+                <div class="mb-3">
+                  <label for="exampleInputEmail1" class="form-label">Surname</label>
+                  <input type="text" class="form-control" id="surName" aria-describedby="emailHelp">
+                </div>
+              </div>
+            </div>
+            <div class="row">
               <div class="col">
                 <div class="mb-3">
                   <label for="exampleInputEmail1" class="form-label">Email address</label>
@@ -41,9 +47,12 @@ Examples for Bootstrap components I might wanna use.
               </div>
             </div>
             <div class="row">
-              <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label">Password</label>
-                <input type="password" class="form-control" id="exampleInputPassword1">
+              <div class="col">
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">Password</label>
+                  <input type="password" class="form-control" id="exampleInputPassword1">
+                  <div class="form-text">Keep your secret password, a secret...</div>
+                </div>
               </div>
             </div>
             
@@ -55,7 +64,7 @@ Examples for Bootstrap components I might wanna use.
         </form>
         <br>
         <p class=”user-select-all”>Text to be copied to clipboard</p>
-        <button type="button" onclick=”copyToClipboard()” class="btn btn-secondary">Copy to Clipboard</button>
+        <button type="button" onclick="copyToClipboard()" class="btn btn-secondary">Copy to Clipboard</button>
 
         <!-- Bootstrap Dropdown example -->
         <div class="btn-group">
