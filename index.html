@@ -10,12 +10,33 @@ Config Generator Web (not exactly web, tho...)
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Config Generator</title>
-
+        <style>
+            #body{
+                border-radius: 0;
+            }
+        </style>
         <!-- Bootstrap CSS import -->
         <link href="asset/css/bootstrap.min.css" rel="stylesheet">
     </head>
-    <body style="margin: 10%; margin-top: 5%;">
-        <p style="text-align: center;">Hello there</p>
+    <body style="margin: 15%; margin-top: 5%">
+        <div class="row border-0">
+            <div class="col">
+                <div class="dropdown border-0">
+                    <button class="btn btn-primary dropdown-toggle rounded-0" type="button" data-bs-toggle="dropdown">
+                        Test Dropdown
+                    </button>
+                    <ul class="dropdown-menu rounded-0">
+                        <li class="dropdown-item">Catalyst 3560 CX (12 port)</li>
+                        <li class="dropdown-item">Catalyst 3560X</li>
+                        <li class="dropdown-item">Catalyst 3650 / 9300 Series</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col">
+                <textarea class="form-control rounded-0" id="exampleFormControlTextarea1" rows="3"></textarea>
+                <label class="form-label">Test Layout</label>
+            </div>
+        </div>
         <script src="asset/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
