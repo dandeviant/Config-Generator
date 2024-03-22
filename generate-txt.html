@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+
+        <input type="text" id="textContent" name="textContent"><br><br>
+        <button onclick="downloadFile();">Download File</button>
+        
+        <script>
+            const downloadFile = () => {
+                link = document.createElement("a");
+                content = document.getElementById("textContent").value;
+                console.log(content);
+                file = new Blob([content], {type: 'text/plain'});
+                link.href = URL.createObjectURL(file);
+                link.download = "config.text";
+                link.click();
+                URL.revokeObjectURL(link.href);SVGAnimateElement
+            }
+            // The script will generate a config.txt
+            // content based on what is input into the text box
+        </script>
+    </body>
+</html>

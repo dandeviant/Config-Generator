@@ -1,0 +1,1952 @@
+
+!
+! Last configuration change at 13:04:38 UTC Wed Mar 13 2024 by plabelsvc
+! NVRAM config last updated at 13:04:40 UTC Wed Mar 13 2024 by plabelsvc
+!
+version 15.2
+no service pad
+service tcp-keepalives-in
+service tcp-keepalives-out
+service timestamps debug datetime localtime show-timezone
+service timestamps log datetime localtime show-timezone
+service password-encryption
+!
+hostname sa-my-mkz-b06-0019
+!
+boot-start-marker
+boot-end-marker
+!
+logging snmp-authfail
+logging buffered 32768 warnings
+no logging console
+logging monitor warnings
+enable secret 5 $1$OLjh$Ro9TK5vcFSZ1EZ4Xit6mJ0
+!
+username nocuser privilege 15 secret 5 $1$OLjh$Ro9TK5vcFSZ1EZ4Xit6mJ0
+aaa new-model
+!
+!
+aaa group server radius NAC-RADIUS
+ server name MKZSNR01
+ server name MKZSNR02
+ load-balance method least-outstanding
+!
+aaa group server tacacs+ NOC-TACACS
+ server name MUCSNR13
+ server name MUCSNR14
+!
+aaa authentication banner CCCCCCC 
+******************************************************* 
+*  ! TACACS server cannot be reached at the moment !  * 
+******************************************************* 
+
+aaa authentication login default group NOC-TACACS local
+aaa authentication enable default group NOC-TACACS enable
+aaa authentication dot1x default group NAC-RADIUS
+aaa authorization config-commands
+aaa authorization exec default group NOC-TACACS if-authenticated 
+aaa authorization commands 15 default group NOC-TACACS local 
+aaa authorization network default group NAC-RADIUS 
+aaa accounting dot1x default start-stop group NAC-RADIUS
+aaa accounting exec default start-stop group NOC-TACACS
+aaa accounting commands 0 default start-stop group NOC-TACACS
+aaa accounting commands 1 default start-stop group NOC-TACACS
+aaa accounting commands 15 default start-stop group NOC-TACACS
+aaa accounting system default start-stop group NAC-RADIUS
+no aaa accounting system guarantee-first
+!
+!
+!
+!
+!
+aaa server radius dynamic-author
+ client 172.30.147.3 server-key 7 000B115E1758030B1A2F56420C0B
+ client 172.30.147.4 server-key 7 09434C510A061F1F1E021E262E36
+!
+aaa session-id common
+system mtu routing 1500
+!
+!
+!
+!
+device-sensor accounting
+device-sensor notify all-changes
+no ip source-route
+!
+!
+ip dhcp snooping vlan 110-111,115,118-121,1050,1111
+no ip dhcp snooping information option
+ip dhcp snooping database flash:dhcp_snooping
+ip dhcp snooping
+no ip domain-lookup
+ip domain-name ap.lan
+ip device tracking probe auto-source fallback 0.0.0.1 255.0.0.0 override
+ip device tracking probe delay 10
+!
+!
+!
+!
+!
+udld enable
+
+udld message time 7
+
+authentication mac-move permit
+authentication logging verbose
+mls qos map cos-dscp 0 8 16 24 32 46 48 56
+!
+crypto pki trustpoint TP-self-signed-3679980800
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-3679980800 
+ revocation-check none
+ rsakeypair TP-self-signed-3679980800
+!
+crypto pki trustpoint HTTPS_SS_CERT_KEYPAIR
+ enrollment selfsigned
+ serial-number
+ revocation-check none
+ rsakeypair HTTPS_SS_CERT_KEYPAIR
+!
+!
+crypto pki certificate chain TP-self-signed-3679980800
+crypto pki certificate chain HTTPS_SS_CERT_KEYPAIR
+ certificate self-signed 01 nvram:77C9E500host#1.cer
+!
+!
+!
+dot1x system-auth-control
+dot1x critical eapol
+!
+spanning-tree mode rapid-pvst
+spanning-tree loopguard default
+spanning-tree portfast edge bpduguard default
+no spanning-tree optimize bpdu transmission
+spanning-tree extend system-id
+errdisable recovery cause udld
+errdisable recovery cause bpduguard
+errdisable recovery cause security-violation
+errdisable recovery cause channel-misconfig
+errdisable recovery cause pagp-flap
+errdisable recovery cause dtp-flap
+errdisable recovery cause link-flap
+errdisable recovery cause sfp-config-mismatch
+errdisable recovery cause gbic-invalid
+errdisable recovery cause l2ptguard
+errdisable recovery cause psecure-violation
+errdisable recovery cause dhcp-rate-limit
+errdisable recovery cause vmps
+errdisable recovery cause storm-control
+errdisable recovery cause arp-inspection
+errdisable recovery cause loopback
+!
+!
+!
+!
+vlan internal allocation policy ascending
+vlan group IFXprinterng vlan-list 1111
+vlan group ISCclient vlan-list 1050
+cdp tlv-list CDP-FILTER
+ address
+ version
+ vtp-mgmt-domain
+ mgmt-address
+ ip-prefix
+cdp filter-tlv-list CDP-FILTER
+!
+ip tcp path-mtu-discovery
+ip telnet source-interface Vlan99
+no lldp tlv-select management-address
+no lldp tlv-select system-description
+lldp run
+!
+policy-map PM-ISC-VLAN
+ class class-default
+  trust dscp
+policy-map VOICE-VLAN
+ class class-default
+  trust dscp
+!
+!
+! 
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface FastEthernet0
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/1
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/2
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/3
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/4
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/5
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/6
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/7
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/8
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/9
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/10
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/11
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/12
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/13
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/14
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/15
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/16
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/17
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/18
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/19
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/20
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/21
+ description #PoE off
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ power inline never
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/22
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/23
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/24
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/25
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/26
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/27
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/28
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/29
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/30
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/31
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/32
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/33
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/34
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/35
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/36
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/37
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/38
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/39
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/40
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/41
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/42
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/43
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/44
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/45
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/46
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/47
+ description #ISC-lite
+ switchport access vlan 120
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet0/48
+ description #ISC-lite
+ switchport access vlan 121
+ switchport mode access
+ switchport voice vlan 668
+ switchport port-security maximum 3
+ switchport port-security violation restrict
+ switchport port-security aging time 1
+ switchport port-security aging type inactivity
+ switchport port-security
+ ip access-group PRE-AUTH-PERMIT-ANY in
+ no logging event link-status
+ authentication control-direction in
+ authentication event fail retry 3 action next-method
+ authentication event server alive action reinitialize 
+ authentication host-mode multi-auth
+ authentication open
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ authentication port-control auto
+ authentication periodic
+ authentication timer reauthenticate server
+ authentication violation restrict
+ mab
+ no snmp trap link-status
+ mls qos vlan-based
+ dot1x pae authenticator
+ dot1x timeout tx-period 3
+ spanning-tree portfast edge
+ ip dhcp snooping limit rate 100
+!
+interface GigabitEthernet1/1
+ description #UPLINK sd-my-mkz-b05-0101.ap.lan
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 99
+ switchport mode trunk
+ ip device tracking maximum 0
+ mls qos trust dscp
+ ip dhcp snooping trust
+!
+interface GigabitEthernet1/2
+ shutdown
+!
+interface GigabitEthernet1/3
+ description #UPLINK sd-my-mkz-b06-m101.ap.lan
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 99
+ switchport mode trunk
+ ip device tracking maximum 0
+ mls qos trust dscp
+ ip dhcp snooping trust
+!
+interface GigabitEthernet1/4
+ shutdown
+!
+interface TenGigabitEthernet1/1
+!
+interface TenGigabitEthernet1/2
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan99
+ description NOC_VRF_MGMT 
+ ip address 172.30.146.234 255.255.255.192
+!
+interface Vlan120
+ ip address dhcp
+ no ip route-cache
+ no ip mroute-cache
+ no logging event link-status
+ no snmp trap link-status
+!
+interface Vlan668
+ no ip address
+ service-policy input VOICE-VLAN
+!
+interface Vlan1050
+ ip address dhcp
+ service-policy input PM-ISC-VLAN
+!
+ip default-gateway 172.30.146.254
+ip forward-protocol nd
+!
+ip ftp source-interface Vlan99
+ip ftp username nocuser
+no ip http server
+no ip http secure-server
+ip tftp source-interface Vlan99
+ip ssh time-out 20
+ip ssh source-interface Vlan99
+ip ssh version 2
+ip tacacs source-interface Vlan99
+!
+ip access-list standard line-access
+ permit 172.30.0.0 0.0.255.255
+ permit 10.30.0.0 0.0.255.255
+!
+ip access-list extended PRE-AUTH-PERMIT-ANY
+ permit ip any any
+!
+ip radius source-interface Vlan99 
+ip sla enable reaction-alerts
+logging history size 500
+logging trap warnings
+logging facility local0
+logging source-interface Vlan99
+logging host 172.30.37.7
+logging host 10.161.16.28
+logging host 10.161.5.23
+logging host 10.228.188.200
+access-list 1 permit 10.30.64.84
+access-list 1 permit 10.30.64.85
+access-list 1 permit 10.162.163.13
+access-list 1 permit 172.17.167.14
+access-list 1 permit 172.28.239.121
+access-list 1 permit 10.161.5.132
+access-list 1 permit 10.219.178.44
+access-list 1 permit 10.143.179.99
+access-list 1 permit 172.20.83.149
+access-list 1 permit 172.30.37.18
+access-list 1 permit 172.30.37.17
+access-list 1 permit 172.30.37.16
+access-list 1 permit 10.162.204.238
+access-list 1 permit 10.228.188.195
+access-list 1 permit 10.228.188.199
+access-list 1 permit 10.64.190.98
+access-list 1 permit 10.228.188.200
+access-list 1 permit 10.64.190.104
+access-list 1 permit 10.64.190.105
+access-list 1 permit 172.30.67.85
+access-list 1 permit 172.30.67.84
+access-list 1 permit 10.161.16.28
+access-list 1 permit 10.161.5.23
+access-list 1 permit 172.21.246.129
+access-list 1 permit 10.214.190.176
+access-list 1 permit 10.64.179.36
+access-list 1 permit 10.139.189.217
+access-list 1 permit 172.30.68.28
+access-list 1 permit 172.30.68.27
+access-list 1 permit 172.30.68.6
+access-list 1 permit 10.161.30.69
+access-list 1 permit 172.30.68.7
+access-list 1 permit 172.30.68.5
+access-list 1 permit 10.161.30.67
+access-list 1 permit 172.29.83.27
+access-list 2 permit 172.30.37.59
+!
+snmp-server community lan-read RO 1
+snmp-server trap-source Vlan99
+snmp-server location Malacca 
+snmp-server contact Infineon Network Infrastructure, +43-5-1777-4444, noc@infineon.com
+snmp-server enable traps snmp authentication linkdown linkup coldstart warmstart
+snmp-server enable traps flowmon
+snmp-server enable traps transceiver all
+snmp-server enable traps call-home message-send-fail server-fail
+snmp-server enable traps eigrp
+snmp-server enable traps tty
+snmp-server enable traps ospf state-change
+snmp-server enable traps ospf errors
+snmp-server enable traps ospf retransmit
+snmp-server enable traps ospf lsa
+snmp-server enable traps ospf cisco-specific state-change nssa-trans-change
+snmp-server enable traps ospf cisco-specific state-change shamlink interface-old
+snmp-server enable traps ospf cisco-specific state-change shamlink neighbor
+snmp-server enable traps ospf cisco-specific errors
+snmp-server enable traps ospf cisco-specific retransmit
+snmp-server enable traps ospf cisco-specific lsa
+snmp-server enable traps license
+snmp-server enable traps auth-framework sec-violation
+snmp-server enable traps bfd
+snmp-server enable traps cef resource-failure peer-state-change peer-fib-state-change inconsistency
+snmp-server enable traps config-copy
+snmp-server enable traps config
+snmp-server enable traps config-ctid
+snmp-server enable traps pki
+snmp-server enable traps trustsec authz-file-error cache-file-error keystore-file-error keystore-sync-fail random-number-fail src-entropy-fail
+snmp-server enable traps trustsec-policy peer-policy-updated authz-sgacl-fail
+snmp-server enable traps trustsec-sxp conn-srcaddr-err msg-parse-err conn-config-err binding-err conn-up conn-down binding-expn-fail oper-nodeid-change binding-conflict
+snmp-server enable traps energywise
+snmp-server enable traps fru-ctrl
+snmp-server enable traps entity
+snmp-server enable traps event-manager
+snmp-server enable traps hsrp
+snmp-server enable traps ipmulticast
+snmp-server enable traps ike policy add
+snmp-server enable traps ike policy delete
+snmp-server enable traps ike tunnel start
+snmp-server enable traps ike tunnel stop
+snmp-server enable traps ipsec cryptomap add
+snmp-server enable traps ipsec cryptomap delete
+snmp-server enable traps ipsec cryptomap attach
+snmp-server enable traps ipsec cryptomap detach
+snmp-server enable traps ipsec tunnel start
+snmp-server enable traps ipsec tunnel stop
+snmp-server enable traps ipsec too-many-sas
+snmp-server enable traps ospfv3 state-change
+snmp-server enable traps ospfv3 errors
+snmp-server enable traps power-ethernet group 1
+snmp-server enable traps power-ethernet police
+snmp-server enable traps pim neighbor-change rp-mapping-change invalid-pim-message
+snmp-server enable traps cpu threshold
+snmp-server enable traps rep
+snmp-server enable traps ipsla
+snmp-server enable traps bridge newroot topologychange
+snmp-server enable traps stpx inconsistency root-inconsistency loop-inconsistency
+snmp-server enable traps syslog
+snmp-server enable traps trustsec-interface unauthorized sap-fail authc-fail supplicant-fail authz-fail
+snmp-server enable traps trustsec-server radius-server provision-secret
+snmp-server enable traps vtp
+snmp-server enable traps vlancreate
+snmp-server enable traps vlandelete
+snmp-server enable traps flash insertion removal
+snmp-server enable traps port-security
+snmp-server enable traps envmon fan shutdown supply temperature status
+snmp-server enable traps stackwise
+snmp-server enable traps bulkstat collection transfer
+snmp-server enable traps mac-notification change move threshold
+snmp-server enable traps vrfmib vrf-up vrf-down vnet-trunk-up vnet-trunk-down
+snmp-server enable traps errdisable
+snmp-server enable traps vlan-membership
+snmp-server host 172.30.37.16 lan-read 
+snmp-server host 172.30.37.17 lan-read 
+snmp-server host 172.30.37.18 lan-read 
+snmp ifmib ifindex persist
+tacacs-server directed-request
+tacacs server MUCSNR13
+ address ipv4 10.30.135.104
+ key 7 151D0954172923293D3D2F2E1615
+tacacs server MUCSNR14
+ address ipv4 10.30.135.105
+ key 7 020906031805072C594013150005
+!
+radius-server attribute 6 on-for-login-auth
+radius-server attribute 8 include-in-access-req
+radius-server attribute 32 include-in-access-req 
+radius-server attribute 25 access-request include
+radius-server dead-criteria time 5 tries 3
+radius-server deadtime 5
+!
+radius server MKZSNR01
+ address ipv4 172.30.147.3 auth-port 1812 acct-port 1813
+ automate-tester username radius-test
+ key 7 020906031805072C594013150005
+!
+radius server MKZSNR02
+ address ipv4 172.30.147.4 auth-port 1812 acct-port 1813
+ automate-tester username radius-test
+ key 7 05040457324F46040C0B0D1E0E1E
+!
+banner login 
+********************************************************
+*  This is an Infineon Technologies computer system    *
+*         ! UNAUTHORIZED ACCESS PROHIBITED !           *
+********************************************************
+
+banner motd 
+********************************************************
+*               Infineon Technologies AG               *
+********************************************************
+*                                                      *
+*     Contact:   Infineon Network Infrastructure       *
+*                +43-51777-4444                        *
+*                noc@infineon.com                      *
+*                                                      *
+********************************************************
+*             ! ATTENTION - DOT1X ACTIVE !             *
+********************************************************
+
+!
+line con 0
+ exec-timeout 20 0
+ logging synchronous
+ vacant-message 
+*******************************************************
+*           ! Your login time has expired !           *
+*******************************************************
+
+ stopbits 1
+line vty 0 4
+ access-class line-access in
+ exec-timeout 20 0
+ logging synchronous
+ vacant-message 
+*******************************************************
+*           ! Your login time has expired !           *
+*******************************************************
+
+ transport input ssh
+line vty 5 15
+ access-class line-access in
+ exec-timeout 20 0
+ logging synchronous
+ vacant-message 
+*******************************************************
+*           ! Your login time has expired !           *
+*******************************************************
+
+ transport input ssh
+!
+ntp authentication-key 1 md5 000B115E1758030B1A2F56420C0B 7
+ntp authenticate
+ntp trusted-key 1
+ntp source Vlan99
+ntp access-group peer 2
+ntp server 172.30.37.59 key 1
+mac address-table notification change
+mac address-table notification mac-move
+!
+end
