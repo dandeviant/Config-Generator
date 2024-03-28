@@ -13,5 +13,5 @@ As of 2024/02/16
     - Current Phase: Generate configs for VLAN on access ports
 
 
-UI      : HTML, JavaScript, CSS, Bootstrap
+UI      : HTML, JavaScript, CSS, Bootstrap\
 Backend : JavaScript   
